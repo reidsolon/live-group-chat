@@ -167,7 +167,7 @@ class ChatRoomController extends Controller
                     }
                 } else {
                     $this->request['status'] = 0;
-                    $this->request['message'] = 'Room password doesn`t match';
+                    $this->request['message'] = 'Incorrect room password';
                 }
             }
             

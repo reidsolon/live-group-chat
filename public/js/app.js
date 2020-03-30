@@ -2368,6 +2368,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     joinRoom: function joinRoom() {
+      var _this2 = this;
+
       var payload = {
         room_id: this.route.room_id,
         room_pass: this.join.room_pass,
@@ -2375,8 +2377,12 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.post('/room/join', payload).then(function (res) {
         if (res.status == 200) {
-          if (res.data.status == 1) {} else {
-            console.log(res.data.message);
+          if (res.data.status == 1) {
+            _this2.$parent.getActiveRooms();
+
+            _this2.checkIfJoined();
+          } else {
+            alert(res.data.message);
           }
         } else {}
       })["catch"](function (err) {
@@ -2386,6 +2392,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.setRoute();
+    console.log(this.$parent);
   }
 });
 

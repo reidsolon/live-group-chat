@@ -102,9 +102,10 @@ export default {
             .then( res => {
                 if(res.status == 200) {
                     if(res.data.status == 1) {
-
+                        this.$parent.getActiveRooms()
+                        this.checkIfJoined()
                     } else {
-                        console.log(res.data.message)
+                        alert(res.data.message)
                     }
                 } else { 
 
@@ -117,6 +118,7 @@ export default {
     },
     mounted() {
         this.setRoute()
+        console.log(this.$parent)
     }
 }
 </script>
