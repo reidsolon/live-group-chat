@@ -2137,6 +2137,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2411,6 +2422,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2424,6 +2441,11 @@ __webpack_require__.r(__webpack_exports__);
       //join room 
       join: {
         room_pass: ''
+      },
+      data: {
+        messages_row: [],
+        sending: false,
+        message: ''
       }
     };
   },
@@ -2431,6 +2453,57 @@ __webpack_require__.r(__webpack_exports__);
     '$route': 'setRoute'
   },
   methods: {
+    _getRoomMessages: function _getRoomMessages(id) {
+      var _this = this;
+
+      var payload = {
+        room_id: this.route.room_id
+      };
+      axios.post('/room/getMessages', payload).then(function (res) {
+        if (res.status == 200) {
+          if (res.data.status == 1) {
+            _this.data.messages_row = res.data.rows;
+          } else if (res.data.status == -1) {
+            _this.$toastr.w(res.data.message);
+          } else {
+            _this.toastr.w(res.data.message);
+          }
+        } else {
+          _this.toastr.w("Error with status code of ".concat(res.status));
+        }
+      })["catch"](function (err) {
+        _this.$toastr.e(err);
+      });
+    },
+    sendMessage: function sendMessage() {
+      var _this2 = this;
+
+      this.data.sending = true;
+
+      if (this.data.message != '' && this.data.message != null) {
+        var payload = {
+          message: this.data.message,
+          room_id: this.route.room_id
+        };
+        axios.post('/user/sendMessage', payload).then(function (res) {
+          _this2.data.sending = false;
+
+          if (res.status == 200) {
+            if (res.data.status == 1) {
+              _this2.data.message = '';
+            } else {
+              _this2.$toastr.w(res.data.message);
+            }
+          } else {
+            _this2.$toastr.w("Status code ".concat(res.status), 'Request Failed');
+          }
+        })["catch"](function (err) {
+          _this2.$toastr.e(err);
+        });
+      } else {
+        this.$toastr.w('You have empty message!', 'Dont be silly!');
+      }
+    },
     setRoute: function setRoute() {
       this.route.room_name = this.$route.params.room_name;
       this.route.room_type = this.$route.params.room_type;
@@ -2439,7 +2512,7 @@ __webpack_require__.r(__webpack_exports__);
       this.checkIfJoined();
     },
     checkIfJoined: function checkIfJoined() {
-      var _this = this;
+      var _this3 = this;
 
       var payload = {
         roomID: this.route.room_id
@@ -2447,9 +2520,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/room/isJoined', payload).then(function (res) {
         if (res.status == 200) {
           if (res.data.status == 1) {
-            _this.joined = true;
+            _this3.joined = true;
+
+            if (_this3.joined) {
+              _this3._getRoomMessages(_this3.route.room_id);
+            }
           } else {
-            _this.joined = false;
+            _this3.joined = false;
           }
         } else {
           console.log(res.status);
@@ -2459,7 +2536,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     joinRoom: function joinRoom() {
-      var _this2 = this;
+      var _this4 = this;
 
       var payload = {
         room_id: this.route.room_id,
@@ -2469,13 +2546,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/room/join', payload).then(function (res) {
         if (res.status == 200) {
           if (res.data.status == 1) {
-            _this2.$toastr.s(res.data.message, "Success");
+            _this4.$toastr.s(res.data.message, "Success");
 
-            _this2.$parent.getActiveRooms();
+            _this4.$parent.getActiveRooms();
 
-            _this2.checkIfJoined();
+            _this4.checkIfJoined();
           } else {
-            _this2.$toastr.e(res.data.message, "Failed");
+            _this4.$toastr.e(res.data.message, "Failed");
           }
         } else {}
       })["catch"](function (err) {
@@ -7087,7 +7164,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n#chatLogs[data-v-478ca30d] {\r\n    height: 50vh;\n}\r\n", ""]);
+exports.push([module.i, "\n#chatLogs[data-v-478ca30d] {\r\n    height: 50vh;\n}\ntextarea[data-v-478ca30d] {resize: none;}\r\n", ""]);
 
 // exports
 
@@ -39349,7 +39426,37 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "col-md-9" }, [_c("router-view")], 1)
+        _c("div", { staticClass: "col-md-9 container-fluid" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-12" }, [_c("router-view")], 1),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "col-12", staticStyle: { "margin-top": "10px" } },
+              [
+                _c("div", { staticClass: "card" }, [
+                  _c("div", { staticClass: "card-body" }, [
+                    _vm._v("\n                            Developed by "),
+                    _c(
+                      "a",
+                      {
+                        attrs: {
+                          href: "https://github.com/reidsolon",
+                          target: "_blank"
+                        }
+                      },
+                      [
+                        _c("ion-icon", { attrs: { name: "logo-github" } }),
+                        _vm._v(" Ray Anthony Solon.")
+                      ],
+                      1
+                    )
+                  ])
+                ])
+              ]
+            )
+          ])
+        ])
       ])
     ],
     1
@@ -39505,16 +39612,59 @@ var render = function() {
     _vm._v(" "),
     _vm.joined
       ? _c("div", { staticClass: "card-footer" }, [
-          _c("div", { staticClass: "input-group mb-3" }, [
-            _c("input", {
-              staticClass: "form-control",
+          _c("div", { staticClass: "input-group" }, [
+            _c("textarea", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.data.message,
+                  expression: "data.message"
+                }
+              ],
+              staticClass: "form-control p-1",
               attrs: {
                 type: "text",
                 placeholder: "Say something to " + _vm.route.room_name + " ..."
+              },
+              domProps: { value: _vm.data.message },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.data, "message", $event.target.value)
+                }
               }
             }),
             _vm._v(" "),
-            _vm._m(1)
+            _c("div", { staticClass: "input-group-append" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-outline-secondary",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      return _vm.sendMessage()
+                    }
+                  }
+                },
+                [
+                  _vm.data.sending
+                    ? _c(
+                        "div",
+                        { staticClass: "d-flex justify-content-center" },
+                        [_vm._m(1)]
+                      )
+                    : _c("div", [
+                        _vm._v(
+                          "\n                        Send\n                    "
+                        )
+                      ])
+                ]
+              )
+            ])
           ])
         ])
       : _c("div", { staticClass: "card-footer" }, [
@@ -39561,11 +39711,7 @@ var render = function() {
               )
             ])
           ])
-        ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "card-footer" }, [
-      _vm._v("\n        Enjoy using this app? Buy me a coffee!\n    ")
-    ])
+        ])
   ])
 }
 var staticRenderFns = [
@@ -39587,13 +39733,11 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-append" }, [
-      _c(
-        "button",
-        { staticClass: "btn btn-outline-secondary", attrs: { type: "button" } },
-        [_vm._v("Send")]
-      )
-    ])
+    return _c(
+      "div",
+      { staticClass: "spinner-border", attrs: { role: "status" } },
+      [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+    )
   }
 ]
 render._withStripped = true

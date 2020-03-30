@@ -218,8 +218,19 @@
                 </div>
                
             </div>
-            <div class="col-md-9">
-                <router-view></router-view>
+            <div class="col-md-9 container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <router-view></router-view>
+                    </div>
+                    <div class="col-12" style="margin-top: 10px;">
+                        <div class="card">
+                            <div class="card-body">
+                                Developed by <a href="https://github.com/reidsolon" target="_blank"><ion-icon name="logo-github"></ion-icon> Ray Anthony Solon.</a> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -216,6 +216,57 @@ class ChatRoomController extends Controller
         return $this->request;
     }
 
+    public function getRoomMessages(Request $request) 
+    {
+        $this->isAuthenticated();
+
+        if($request) {
+            $where = array(
+                'chatroomID' => $request->room_id,
+                'status'     => 1,  
+            );
+            $messages = DB::table('room_chat_logs')->where($where)->get();
+
+            if(count($messages)) {
+                $this->request['rows']  = $messages;
+                $this->request['status'] = 1;
+                $this->request['message'] = '';
+            } else {
+                $this->request['status'] = -1;
+                $this->request['message'] = 'No messages';
+            }
+        } else {
+            $this->request['status'] = 0;
+            $this->request['message'] = 'Empty payload';
+        }
+
+        return $this->request;
+    }
+    public function sendMessage(Request $request)
+    {
+        $this->isAuthenticated();
+        
+        if($request) {
+            $insert = array(
+                'participantID' => Auth::user()->id,
+                'chatroomID'    => $request->room_id,
+                'message'       => $request->message
+            );
+            $id = DB::table('room_chat_logs')->insertGetId($insert);
+            if($id) {
+                $this->request['status'] = 1;
+                $this->request['message'] = 'Message successfully sent';
+            } else {
+                $this->request['status'] = 0;
+                $this->request['message'] = 'Failed to send message';
+            }
+        } else {
+            $this->request['status'] = 0;
+            $this->request['message'] = 'Empty payload';
+        }
+        return $this->request;
+    }
+
     public function isExist(Request $request)
     {
         //if authenticated
