@@ -211,7 +211,7 @@
                     <div class="col-12" style="margin-top: 10px;">
                         <div class="card">
                             <div class="card-body">
-                                Developed by <a href="https://github.com/reidsolon" target="_blank"><ion-icon name="logo-github"></ion-icon> Ray Anthony Solon.</a> 
+                                Having fun with this app? Why don't you buy me a coffe!
                             </div>
                         </div>
                     </div>
@@ -226,7 +226,7 @@
                     <div class="col-12" style="margin-top: 10px;">
                         <div class="card">
                             <div class="card-body">
-                                Developed by <a href="https://github.com/reidsolon" target="_blank"><ion-icon name="logo-github"></ion-icon> Ray Anthony Solon.</a> 
+                                Developed & Maintained by <a href="https://github.com/reidsolon" target="_blank"><ion-icon name="logo-github"></ion-icon> Ray Anthony Solon.</a> 
                             </div>
                         </div>
                     </div>
@@ -413,9 +413,12 @@ export default {
         }
     },
     mounted() {
+        this._getCurrentUser()
         this.getUserRooms()
         this.getActiveRooms()
-        this._getCurrentUser()
+
+        //welcome message
+        this.$toastr.s('Hope you are having an amazing day!', 'Welcome to Live Chat Group')
     }
 
 }

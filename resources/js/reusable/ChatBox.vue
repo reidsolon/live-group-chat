@@ -2,25 +2,68 @@
     <div class="card">
         <div class="card-header container-fluid">
             <div class="row">
-                <div class="col-6">
+                <div class="col-9">
                     {{route.room_name}} 
                     <template v-if="!joined">
                         (You haven't join this room yet.)
                     </template>
                 </div>
-                <div class="col-6" v-if="route.room_type == 'm'" style="text-align: right;">
+                <div class="col-3" v-if="route.room_type == 'm'" style="text-align: right;">
                     <ion-icon name="settings-outline"></ion-icon>
                 </div>
             </div>
             
         </div>
 
-        <div class="card-body" id="chatLogs">
-            <div class="d-flex justify-content-center" v-if="condition">
+        <div class="card-body msger" id="chatLogs">
+            <!-- <div class="d-flex justify-content-center" v-if="condition">
                 <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
-            </div>
+            </div> -->
+                <main class="msger-chat">
+                    <!-- DEFAULT MESSAGE -->
+                    <template v-if="data.messages_row.length < 1">
+                        <div class="msg left-msg">
+                            <div
+                            class="msg-img"
+                            style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"
+                            ></div>
+
+                            <div class="msg-bubble">
+                                <div class="msg-info">
+                                <div class="msg-info-name">CHAT ROOM BOT</div>
+                                <div class="msg-info-time">--:--</div>
+                                </div>
+
+                                <div class="msg-text">
+                                    Hi, welcome to Live Chat Room!
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="msg" :class="{'right-msg' : message.participantID == data.parentData.userData.id }" v-for="(message, index) in data.messages_row" :key="index">
+                            <div 
+                            v-if="message.participantID != data.parentData.userData.id"
+                            class="msg-img"
+                            style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)"
+                            ></div>
+
+                            <div class="msg-bubble">
+                                <div class="msg-info">
+                                <div class="msg-info-name">{{message.userName}}</div>
+                                <div class="msg-info-time">{{message.created_at | moment("from", 'now')}}</div>
+                                </div>
+
+                                <div class="msg-text">
+                                    {{message.message}}
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    
+                </main>
         </div>
         <div class="card-footer" v-if="joined">
             <div class="input-group">
@@ -50,9 +93,12 @@
     </div>
 </template>
 <script>
+
+import {pusher} from '../includes/pusher'
 export default {
     data() {
         return {
+            pusherVal: Object,
             route: {
                 room_id: Number,
                 room_name: '',
@@ -66,6 +112,7 @@ export default {
                 room_pass: '',
             },
             data: {
+                parentData: Object,
                 messages_row: [],
                 sending: false,
                 message: '',
@@ -76,6 +123,19 @@ export default {
         '$route' : 'setRoute'
     },
     methods: {
+        _initPusher() {
+            this.pusherVal = pusher
+
+            // -- NEW ROOM LISTENER
+            const newMessage = this.pusherVal.subscribe(`chat-${this.route.room_id}`)
+            newMessage.bind('new-message', (data) => {
+                this._getRoomMessages(this.route.room_id)
+            })
+            
+        },
+        scrollTop() {
+            $(".msger-chat").stop().animate({ scrollTop: $(".msger-chat")[0].scrollHeight}, 1500);
+        },
         _getRoomMessages(id) {
             const payload = {
                 room_id: this.route.room_id
@@ -85,9 +145,12 @@ export default {
                 if(res.status == 200) {
                     if(res.data.status == 1) {
                         this.data.messages_row = res.data.rows
+                        this.scrollTop()
                     } else if(res.data.status == -1) {
+                        this.data.messages_row = []
                         this.$toastr.w(res.data.message)
                     } else {
+                        this.data.messages_row = []
                         this.toastr.w(res.data.message)
                     }
                 } else {
@@ -127,12 +190,14 @@ export default {
             }
         },
         setRoute() {
+            this.data.messages_row = []
             this.route.room_name = this.$route.params.room_name
             this.route.room_type = this.$route.params.room_type
             this.route.room_id   = this.$route.params.room_key
             this.route.room_is_public = this.$route.params.room_is_public
 
             this.checkIfJoined()
+            this._initPusher()
         },
         checkIfJoined() {
             const payload = {
@@ -185,12 +250,11 @@ export default {
     },
     mounted() {
         this.setRoute()
-        
+        this.data.parentData = this.$parent.data
     }
 }
 </script>
 <style scoped>
-
 #chatLogs {
     height: 50vh;
 }

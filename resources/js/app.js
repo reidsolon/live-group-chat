@@ -16,10 +16,9 @@ import VueToastr from "vue-toastr";
 Vue.use(VueToastr, {
   /* OverWrite Plugin Options if you need */
 });
-
-
 Vue.use(Vuex)
 Vue.use(VueRouter)
+Vue.use(require('vue-moment'))
 
 const axios = require('axios').default;
 

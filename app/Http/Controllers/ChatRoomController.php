@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Events\NewRoomEvent;
+use App\Events\MessageSent;
 use App\Events\JoinedRoom;
 
 class ChatRoomController extends Controller
@@ -225,7 +226,11 @@ class ChatRoomController extends Controller
                 'chatroomID' => $request->room_id,
                 'status'     => 1,  
             );
-            $messages = DB::table('room_chat_logs')->where($where)->get();
+            $messages = DB::table('room_chat_logs')
+                        ->select('room_chat_logs.*')
+                        ->addSelect('users.name as userName')
+                        ->leftJoin('users', 'users.id', '=','room_chat_logs.participantID')
+                        ->where($where)->get();
 
             if(count($messages)) {
                 $this->request['rows']  = $messages;
@@ -250,10 +255,15 @@ class ChatRoomController extends Controller
             $insert = array(
                 'participantID' => Auth::user()->id,
                 'chatroomID'    => $request->room_id,
-                'message'       => $request->message
+                'message'       => $request->message,
+                'created_at'    => date('Y-m-d H:m:i'),
             );
             $id = DB::table('room_chat_logs')->insertGetId($insert);
             if($id) {
+
+                //trigger event
+                event(new MessageSent(Auth::user(), $request->room_id));
+
                 $this->request['status'] = 1;
                 $this->request['message'] = 'Message successfully sent';
             } else {
