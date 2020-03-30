@@ -2260,11 +2260,11 @@ __webpack_require__.r(__webpack_exports__);
           axios.put('/room/isExist', payload).then(function (res) {
             if (res.status == 200) {
               if (res.data.status == 1) {
-                _this4.loading = false;
+                _this4.loading.availableLoad = false;
                 _this4.data.availability = true;
                 _this4.isReady = true;
               } else {
-                _this4.loading = false;
+                _this4.loading.availableLoad = false;
                 _this4.data.availability = false;
                 _this4.isReady = false;
               }
@@ -2290,16 +2290,12 @@ __webpack_require__.r(__webpack_exports__);
           _this5.$toastr.i("".concat(data.user.name, " added a new private room!"), "Room Name ".concat(data.room.roomName));
         }
 
-        _this5.getUserRooms();
-
         _this5.getActiveRooms();
       }); // -- JOINED ROOM LISTENER
 
       var joinedRoomListener = this.pusherVal.subscribe("join-channel-".concat(this.data.userData.id));
       joinedRoomListener.bind('room-joined', function (data) {
         _this5.$toastr.i("".concat(data.user.name, " has joined your room!"), "Room ".concat(data.channel[0].roomName));
-
-        _this5.getActiveRooms();
 
         _this5.getUserRooms();
       });

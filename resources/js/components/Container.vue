@@ -345,11 +345,11 @@ export default {
                     .then( res => {
                         if(res.status == 200) {
                             if(res.data.status == 1) {
-                                this.loading = false
+                                this.loading.availableLoad = false
                                 this.data.availability = true
                                 this.isReady = true
                             } else {
-                                this.loading = false
+                                this.loading.availableLoad = false
                                 this.data.availability = false
                                 this.isReady = false
                             }
@@ -375,8 +375,6 @@ export default {
                 } else {
                     this.$toastr.i(`${data.user.name} added a new private room!`, `Room Name ${data.room.roomName}`)
                 }
-                
-                this.getUserRooms()
                 this.getActiveRooms()
             })
 
@@ -384,7 +382,6 @@ export default {
             const joinedRoomListener = this.pusherVal.subscribe(`join-channel-${this.data.userData.id}`)
             joinedRoomListener.bind('room-joined', (data) => {
                 this.$toastr.i(`${data.user.name} has joined your room!`, `Room ${data.channel[0].roomName}`)
-                this.getActiveRooms()
                 this.getUserRooms()
             })
             
