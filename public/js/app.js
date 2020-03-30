@@ -39608,7 +39608,13 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm._m(0),
+    _c("div", { staticClass: "card-body", attrs: { id: "chatLogs" } }, [
+      _vm.condition
+        ? _c("div", { staticClass: "d-flex justify-content-center" }, [
+            _vm._m(0)
+          ])
+        : _vm._e()
+    ]),
     _vm._v(" "),
     _vm.joined
       ? _c("div", { staticClass: "card-footer" }, [
@@ -39719,15 +39725,11 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-body", attrs: { id: "chatLogs" } }, [
-      _c("div", { staticClass: "d-flex justify-content-center" }, [
-        _c(
-          "div",
-          { staticClass: "spinner-border", attrs: { role: "status" } },
-          [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
-        )
-      ])
-    ])
+    return _c(
+      "div",
+      { staticClass: "spinner-border", attrs: { role: "status" } },
+      [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+    )
   },
   function() {
     var _vm = this

@@ -16,7 +16,7 @@
         </div>
 
         <div class="card-body" id="chatLogs">
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center" v-if="condition">
                 <div class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
