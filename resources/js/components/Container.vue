@@ -54,31 +54,44 @@
                                     <div class="col-12 chat-room-item" data-toggle="modal" data-target="#exampleModal">
                                         Add New Room +
                                     </div>
-                                    <template v-if="data.myRooms.length > 0">
-                                        <template v-for="(myroom, index) in data.myRooms">
-                                            <router-link class="col-12 chat-room-item" :to="'/m/'+myroom.id+'/'+myroom.roomName+'/'+myroom.isPublic" :key="'ROUTER'+index">
-                                                <div class="" :key="index">
-                                                    <div class="chat-room-title">
-                                                        <strong>{{myroom.roomName}}</strong>
+                                    <template v-if="loading.myRoomLoaded">
+                                        <template v-if="data.myRooms.length > 0">
+                                            <template v-for="(myroom, index) in data.myRooms">
+                                                <router-link class="col-12 chat-room-item" :to="'/m/'+myroom.id+'/'+myroom.roomName+'/'+myroom.isPublic" :key="'ROUTER'+index">
+                                                    <div class="" :key="index">
+                                                        <div class="chat-room-title">
+                                                            <strong>{{myroom.roomName}}</strong>
+                                                        </div>
+                                                        <div class="chat-room-details">
+                                                            {{myroom.participants || 0}}/ 30 participants • 
+                                                            <template v-if="myroom.isPublic == 0">
+                                                                <ion-icon name="lock-closed-outline"></ion-icon> Private ({{myroom.randomPass}})
+                                                            </template>
+                                                            <template v-else>
+                                                                <ion-icon name="lock-open-outline"></ion-icon> Public
+                                                            </template>
+                                                        </div>
                                                     </div>
-                                                    <div class="chat-room-details">
-                                                        {{myroom.participants || 0}}/ 30 participants • 
-                                                        <template v-if="myroom.isPublic == 0">
-                                                            <ion-icon name="lock-closed-outline"></ion-icon> Private ({{myroom.randomPass}})
-                                                        </template>
-                                                        <template v-else>
-                                                            <ion-icon name="lock-open-outline"></ion-icon> Public
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                            </router-link>
+                                                </router-link>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <div class="col-12 chat-room-item">
+                                                You haven't created a room yet.
+                                            </div>
                                         </template>
                                     </template>
                                     <template v-else>
                                         <div class="col-12 chat-room-item">
-                                            You haven't created a room yet.
+                                            <div class="d-flex justify-content-center">
+                                                <div class="spinner-border" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </template>
+                                    
+                                    
                                 </div>
                             </div>
                         </div>
@@ -93,35 +106,46 @@
 
                             <div class="container-fluid">
                                 <div class="row">
-                                    <template v-if="data.activeRooms.length > 0">
-                                        <template v-for="(room, index) in data.activeRooms">
-                                            <router-link v-if="room.joined > 0" class="col-12 chat-room-item" :to="'/r/'+room.id+'/'+room.roomName+'/'+room.isPublic" :key="'ROUTER'+index">
-                                                <div class="" :key="index">
-                                                    <div class="chat-room-title">
-                                                        <strong>{{room.roomName}}</strong> 
-                                                        <template v-if="room.joined > 0">
-                                                            ( Joined )
-                                                        </template>
+                                    <template v-if="loading.activeRoomLoaded">
+                                        <template v-if="data.activeRooms.length > 0">
+                                            <template v-for="(room, index) in data.activeRooms">
+                                                <router-link v-if="room.joined > 0" class="col-12 chat-room-item" :to="'/r/'+room.id+'/'+room.roomName+'/'+room.isPublic" :key="'ROUTER'+index">
+                                                    <div class="" :key="index">
+                                                        <div class="chat-room-title">
+                                                            <strong>{{room.roomName}}</strong> 
+                                                            <template v-if="room.joined > 0">
+                                                                ( Joined )
+                                                            </template>
+                                                        </div>
+                                                        <div class="chat-room-details">
+                                                            {{room.participants || 0}} / 30 participants • 
+                                                            <template v-if="room.isPublic == 0">
+                                                                <ion-icon name="lock-closed-outline"></ion-icon> Private
+                                                            </template>
+                                                            <template v-else>
+                                                                <ion-icon name="lock-open-outline"></ion-icon> Public
+                                                            </template>
+                                                        </div>
+                                                        <div class="chat-room-details">
+                                                            Hosted by <strong>{{room.userName}}</strong>
+                                                        </div>
                                                     </div>
-                                                    <div class="chat-room-details">
-                                                        {{room.participants || 0}} / 30 participants • 
-                                                        <template v-if="room.isPublic == 0">
-                                                            <ion-icon name="lock-closed-outline"></ion-icon> Private
-                                                        </template>
-                                                        <template v-else>
-                                                            <ion-icon name="lock-open-outline"></ion-icon> Public
-                                                        </template>
-                                                    </div>
-                                                    <div class="chat-room-details">
-                                                        Hosted by <strong>{{room.userName}}</strong>
-                                                    </div>
-                                                </div>
-                                            </router-link>
+                                                </router-link>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <div class="col-12 chat-room-item">
+                                                You didn't join any of the rooms yet.
+                                            </div>
                                         </template>
                                     </template>
                                     <template v-else>
                                         <div class="col-12 chat-room-item">
-                                            You didn't join any of the rooms yet.
+                                            <div class="d-flex justify-content-center">
+                                                <div class="spinner-border" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </template>
                                 </div>
@@ -138,35 +162,46 @@
 
                             <div class="container-fluid">
                                 <div class="row">
-                                    <template v-if="data.activeRooms.length > 0">
-                                        <template v-for="(room, index) in data.activeRooms">
-                                            <router-link v-if="room.joined < 1" class="col-12 chat-room-item" :to="'/r/'+room.id+'/'+room.roomName+'/'+room.isPublic" :key="'ROUTER'+index">
-                                                <div class="" :key="index">
-                                                    <div class="chat-room-title">
-                                                        <strong>{{room.roomName}}</strong> 
-                                                        <template v-if="room.joined > 0">
-                                                            ( Joined )
-                                                        </template>
+                                    <template v-if="loading.activeRoomLoaded">
+                                        <template v-if="data.activeRooms.length > 0">
+                                            <template v-for="(room, index) in data.activeRooms">
+                                                <router-link v-if="room.joined < 1" class="col-12 chat-room-item" :to="'/r/'+room.id+'/'+room.roomName+'/'+room.isPublic" :key="'ROUTER'+index">
+                                                    <div class="" :key="index">
+                                                        <div class="chat-room-title">
+                                                            <strong>{{room.roomName}}</strong> 
+                                                            <template v-if="room.joined > 0">
+                                                                ( Joined )
+                                                            </template>
+                                                        </div>
+                                                        <div class="chat-room-details">
+                                                            {{room.participants || 0}} / 30 participants • 
+                                                            <template v-if="room.isPublic == 0">
+                                                                <ion-icon name="lock-closed-outline"></ion-icon> Private
+                                                            </template>
+                                                            <template v-else>
+                                                                <ion-icon name="lock-open-outline"></ion-icon> Public
+                                                            </template>
+                                                        </div>
+                                                        <div class="chat-room-details">
+                                                            Hosted by <strong>{{room.userName}}</strong>
+                                                        </div>
                                                     </div>
-                                                    <div class="chat-room-details">
-                                                        {{room.participants || 0}} / 30 participants • 
-                                                        <template v-if="room.isPublic == 0">
-                                                            <ion-icon name="lock-closed-outline"></ion-icon> Private
-                                                        </template>
-                                                        <template v-else>
-                                                            <ion-icon name="lock-open-outline"></ion-icon> Public
-                                                        </template>
-                                                    </div>
-                                                    <div class="chat-room-details">
-                                                        Hosted by <strong>{{room.userName}}</strong>
-                                                    </div>
-                                                </div>
-                                            </router-link>
+                                                </router-link>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <div class="col-12 chat-room-item">
+                                                No active rooms yet.
+                                            </div>
                                         </template>
                                     </template>
                                     <template v-else>
                                         <div class="col-12 chat-room-item">
-                                            No active rooms yet.
+                                            <div class="d-flex justify-content-center">
+                                                <div class="spinner-border" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </template>
                                 </div>
@@ -199,6 +234,7 @@ export default {
     },
     data() {
         return {
+            
             data: {
                 userData: Object,
                 pusherVal: Object,
@@ -208,8 +244,12 @@ export default {
                 myRooms: [],
                 activeRooms: [],
             },
+
             // loading
-            loading: false,
+            loading: {
+                myRoomLoaded: false,
+                activeRoomLoaded: false,
+            },
 
             // validation 
             validation: {
@@ -223,9 +263,11 @@ export default {
     },
     methods: {
         getActiveRooms() {
+            this.loading.activeRoomLoaded = false
             axios.get('/room/allRooms')
             .then( res => {
                 if(res.status == 200) {
+                    this.loading.activeRoomLoaded = true
                     if(res.data.status == 1) {
                         this.data.activeRooms = res.data.rows
                     } else {
@@ -240,9 +282,11 @@ export default {
             })
         },
         getUserRooms() {
+            this.loading.myRoomLoaded = false
             axios.get('/room/userRooms')
             .then( res => {
                 if(res.status == 200) {
+                    this.loading.myRoomLoaded = true
                     if(res.data.status == 1) {
                         this.data.myRooms = res.data.rows
                     } else {
@@ -339,6 +383,8 @@ export default {
             const joinedRoomListener = this.pusherVal.subscribe(`join-channel-${this.data.userData.id}`)
             joinedRoomListener.bind('room-joined', (data) => {
                 this.$toastr.i(`${data.user.name} has joined your room!`, `Room ${data.channel[0].roomName}`)
+                this.getActiveRooms()
+                this.getUserRooms()
             })
             
         },

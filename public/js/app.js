@@ -2102,6 +2102,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2121,7 +2156,10 @@ __webpack_require__.r(__webpack_exports__);
         activeRooms: []
       },
       // loading
-      loading: false,
+      loading: {
+        myRoomLoaded: false,
+        activeRoomLoaded: false
+      },
       // validation 
       validation: {
         isValidated: false,
@@ -2136,8 +2174,11 @@ __webpack_require__.r(__webpack_exports__);
     getActiveRooms: function getActiveRooms() {
       var _this = this;
 
+      this.loading.activeRoomLoaded = false;
       axios.get('/room/allRooms').then(function (res) {
         if (res.status == 200) {
+          _this.loading.activeRoomLoaded = true;
+
           if (res.data.status == 1) {
             _this.data.activeRooms = res.data.rows;
           } else {
@@ -2153,8 +2194,11 @@ __webpack_require__.r(__webpack_exports__);
     getUserRooms: function getUserRooms() {
       var _this2 = this;
 
+      this.loading.myRoomLoaded = false;
       axios.get('/room/userRooms').then(function (res) {
         if (res.status == 200) {
+          _this2.loading.myRoomLoaded = true;
+
           if (res.data.status == 1) {
             _this2.data.myRooms = res.data.rows;
           } else {
@@ -2253,6 +2297,10 @@ __webpack_require__.r(__webpack_exports__);
       var joinedRoomListener = this.pusherVal.subscribe("join-channel-".concat(this.data.userData.id));
       joinedRoomListener.bind('room-joined', function (data) {
         _this5.$toastr.i("".concat(data.user.name, " has joined your room!"), "Room ".concat(data.channel[0].roomName));
+
+        _this5.getActiveRooms();
+
+        _this5.getUserRooms();
       });
     },
     _getCurrentUser: function _getCurrentUser() {
@@ -2321,6 +2369,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
 //
 //
 //
@@ -38831,89 +38883,108 @@ var render = function() {
                         ]
                       ),
                       _vm._v(" "),
-                      _vm.data.myRooms.length > 0
+                      _vm.loading.myRoomLoaded
                         ? [
-                            _vm._l(_vm.data.myRooms, function(myroom, index) {
-                              return [
-                                _c(
-                                  "router-link",
-                                  {
-                                    key: "ROUTER" + index,
-                                    staticClass: "col-12 chat-room-item",
-                                    attrs: {
-                                      to:
-                                        "/m/" +
-                                        myroom.id +
-                                        "/" +
-                                        myroom.roomName +
-                                        "/" +
-                                        myroom.isPublic
-                                    }
-                                  },
-                                  [
-                                    _c("div", { key: index }, [
+                            _vm.data.myRooms.length > 0
+                              ? [
+                                  _vm._l(_vm.data.myRooms, function(
+                                    myroom,
+                                    index
+                                  ) {
+                                    return [
                                       _c(
-                                        "div",
-                                        { staticClass: "chat-room-title" },
+                                        "router-link",
+                                        {
+                                          key: "ROUTER" + index,
+                                          staticClass: "col-12 chat-room-item",
+                                          attrs: {
+                                            to:
+                                              "/m/" +
+                                              myroom.id +
+                                              "/" +
+                                              myroom.roomName +
+                                              "/" +
+                                              myroom.isPublic
+                                          }
+                                        },
                                         [
-                                          _c("strong", [
-                                            _vm._v(_vm._s(myroom.roomName))
+                                          _c("div", { key: index }, [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "chat-room-title"
+                                              },
+                                              [
+                                                _c("strong", [
+                                                  _vm._v(
+                                                    _vm._s(myroom.roomName)
+                                                  )
+                                                ])
+                                              ]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "chat-room-details"
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "\n                                                        " +
+                                                    _vm._s(
+                                                      myroom.participants || 0
+                                                    ) +
+                                                    "/ 30 participants • \n                                                        "
+                                                ),
+                                                myroom.isPublic == 0
+                                                  ? [
+                                                      _c("ion-icon", {
+                                                        attrs: {
+                                                          name:
+                                                            "lock-closed-outline"
+                                                        }
+                                                      }),
+                                                      _vm._v(
+                                                        " Private (" +
+                                                          _vm._s(
+                                                            myroom.randomPass
+                                                          ) +
+                                                          ")\n                                                        "
+                                                      )
+                                                    ]
+                                                  : [
+                                                      _c("ion-icon", {
+                                                        attrs: {
+                                                          name:
+                                                            "lock-open-outline"
+                                                        }
+                                                      }),
+                                                      _vm._v(
+                                                        " Public\n                                                        "
+                                                      )
+                                                    ]
+                                              ],
+                                              2
+                                            )
                                           ])
                                         ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        { staticClass: "chat-room-details" },
-                                        [
-                                          _vm._v(
-                                            "\n                                                    " +
-                                              _vm._s(myroom.participants || 0) +
-                                              "/ 30 participants • \n                                                    "
-                                          ),
-                                          myroom.isPublic == 0
-                                            ? [
-                                                _c("ion-icon", {
-                                                  attrs: {
-                                                    name: "lock-closed-outline"
-                                                  }
-                                                }),
-                                                _vm._v(
-                                                  " Private (" +
-                                                    _vm._s(myroom.randomPass) +
-                                                    ")\n                                                    "
-                                                )
-                                              ]
-                                            : [
-                                                _c("ion-icon", {
-                                                  attrs: {
-                                                    name: "lock-open-outline"
-                                                  }
-                                                }),
-                                                _vm._v(
-                                                  " Public\n                                                    "
-                                                )
-                                              ]
-                                        ],
-                                        2
                                       )
-                                    ])
-                                  ]
-                                )
-                              ]
-                            })
+                                    ]
+                                  })
+                                ]
+                              : [
+                                  _c(
+                                    "div",
+                                    { staticClass: "col-12 chat-room-item" },
+                                    [
+                                      _vm._v(
+                                        "\n                                            You haven't created a room yet.\n                                        "
+                                      )
+                                    ]
+                                  )
+                                ]
                           ]
-                        : [
-                            _c(
-                              "div",
-                              { staticClass: "col-12 chat-room-item" },
-                              [
-                                _vm._v(
-                                  "\n                                        You haven't created a room yet.\n                                    "
-                                )
-                              ]
-                            )
-                          ]
+                        : [_vm._m(0)]
                     ],
                     2
                   )
@@ -38948,124 +39019,137 @@ var render = function() {
                       "div",
                       { staticClass: "row" },
                       [
-                        _vm.data.activeRooms.length > 0
+                        _vm.loading.activeRoomLoaded
                           ? [
-                              _vm._l(_vm.data.activeRooms, function(
-                                room,
-                                index
-                              ) {
-                                return [
-                                  room.joined > 0
-                                    ? _c(
-                                        "router-link",
-                                        {
-                                          key: "ROUTER" + index,
-                                          staticClass: "col-12 chat-room-item",
-                                          attrs: {
-                                            to:
-                                              "/r/" +
-                                              room.id +
-                                              "/" +
-                                              room.roomName +
-                                              "/" +
-                                              room.isPublic
-                                          }
-                                        },
-                                        [
-                                          _c("div", { key: index }, [
-                                            _c(
-                                              "div",
+                              _vm.data.activeRooms.length > 0
+                                ? [
+                                    _vm._l(_vm.data.activeRooms, function(
+                                      room,
+                                      index
+                                    ) {
+                                      return [
+                                        room.joined > 0
+                                          ? _c(
+                                              "router-link",
                                               {
-                                                staticClass: "chat-room-title"
+                                                key: "ROUTER" + index,
+                                                staticClass:
+                                                  "col-12 chat-room-item",
+                                                attrs: {
+                                                  to:
+                                                    "/r/" +
+                                                    room.id +
+                                                    "/" +
+                                                    room.roomName +
+                                                    "/" +
+                                                    room.isPublic
+                                                }
                                               },
                                               [
-                                                _c("strong", [
-                                                  _vm._v(_vm._s(room.roomName))
-                                                ]),
-                                                _vm._v(" "),
-                                                room.joined > 0
-                                                  ? [
+                                                _c("div", { key: index }, [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "chat-room-title"
+                                                    },
+                                                    [
+                                                      _c("strong", [
+                                                        _vm._v(
+                                                          _vm._s(room.roomName)
+                                                        )
+                                                      ]),
+                                                      _vm._v(" "),
+                                                      room.joined > 0
+                                                        ? [
+                                                            _vm._v(
+                                                              "\n                                                            ( Joined )\n                                                        "
+                                                            )
+                                                          ]
+                                                        : _vm._e()
+                                                    ],
+                                                    2
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "chat-room-details"
+                                                    },
+                                                    [
                                                       _vm._v(
-                                                        "\n                                                        ( Joined )\n                                                    "
-                                                      )
-                                                    ]
-                                                  : _vm._e()
-                                              ],
-                                              2
-                                            ),
-                                            _vm._v(" "),
-                                            _c(
-                                              "div",
-                                              {
-                                                staticClass: "chat-room-details"
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "\n                                                    " +
-                                                    _vm._s(
-                                                      room.participants || 0
-                                                    ) +
-                                                    " / 30 participants • \n                                                    "
-                                                ),
-                                                room.isPublic == 0
-                                                  ? [
-                                                      _c("ion-icon", {
-                                                        attrs: {
-                                                          name:
-                                                            "lock-closed-outline"
-                                                        }
-                                                      }),
+                                                        "\n                                                        " +
+                                                          _vm._s(
+                                                            room.participants ||
+                                                              0
+                                                          ) +
+                                                          " / 30 participants • \n                                                        "
+                                                      ),
+                                                      room.isPublic == 0
+                                                        ? [
+                                                            _c("ion-icon", {
+                                                              attrs: {
+                                                                name:
+                                                                  "lock-closed-outline"
+                                                              }
+                                                            }),
+                                                            _vm._v(
+                                                              " Private\n                                                        "
+                                                            )
+                                                          ]
+                                                        : [
+                                                            _c("ion-icon", {
+                                                              attrs: {
+                                                                name:
+                                                                  "lock-open-outline"
+                                                              }
+                                                            }),
+                                                            _vm._v(
+                                                              " Public\n                                                        "
+                                                            )
+                                                          ]
+                                                    ],
+                                                    2
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "chat-room-details"
+                                                    },
+                                                    [
                                                       _vm._v(
-                                                        " Private\n                                                    "
-                                                      )
+                                                        "\n                                                        Hosted by "
+                                                      ),
+                                                      _c("strong", [
+                                                        _vm._v(
+                                                          _vm._s(room.userName)
+                                                        )
+                                                      ])
                                                     ]
-                                                  : [
-                                                      _c("ion-icon", {
-                                                        attrs: {
-                                                          name:
-                                                            "lock-open-outline"
-                                                        }
-                                                      }),
-                                                      _vm._v(
-                                                        " Public\n                                                    "
-                                                      )
-                                                    ]
-                                              ],
-                                              2
-                                            ),
-                                            _vm._v(" "),
-                                            _c(
-                                              "div",
-                                              {
-                                                staticClass: "chat-room-details"
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "\n                                                    Hosted by "
-                                                ),
-                                                _c("strong", [
-                                                  _vm._v(_vm._s(room.userName))
+                                                  )
                                                 ])
                                               ]
                                             )
-                                          ])
-                                        ]
-                                      )
-                                    : _vm._e()
-                                ]
-                              })
+                                          : _vm._e()
+                                      ]
+                                    })
+                                  ]
+                                : [
+                                    _c(
+                                      "div",
+                                      { staticClass: "col-12 chat-room-item" },
+                                      [
+                                        _vm._v(
+                                          "\n                                            You didn't join any of the rooms yet.\n                                        "
+                                        )
+                                      ]
+                                    )
+                                  ]
                             ]
-                          : [
-                              _c(
-                                "div",
-                                { staticClass: "col-12 chat-room-item" },
-                                [
-                                  _vm._v(
-                                    "\n                                        You didn't join any of the rooms yet.\n                                    "
-                                  )
-                                ]
-                              )
-                            ]
+                          : [_vm._m(1)]
                       ],
                       2
                     )
@@ -39101,124 +39185,137 @@ var render = function() {
                       "div",
                       { staticClass: "row" },
                       [
-                        _vm.data.activeRooms.length > 0
+                        _vm.loading.activeRoomLoaded
                           ? [
-                              _vm._l(_vm.data.activeRooms, function(
-                                room,
-                                index
-                              ) {
-                                return [
-                                  room.joined < 1
-                                    ? _c(
-                                        "router-link",
-                                        {
-                                          key: "ROUTER" + index,
-                                          staticClass: "col-12 chat-room-item",
-                                          attrs: {
-                                            to:
-                                              "/r/" +
-                                              room.id +
-                                              "/" +
-                                              room.roomName +
-                                              "/" +
-                                              room.isPublic
-                                          }
-                                        },
-                                        [
-                                          _c("div", { key: index }, [
-                                            _c(
-                                              "div",
+                              _vm.data.activeRooms.length > 0
+                                ? [
+                                    _vm._l(_vm.data.activeRooms, function(
+                                      room,
+                                      index
+                                    ) {
+                                      return [
+                                        room.joined < 1
+                                          ? _c(
+                                              "router-link",
                                               {
-                                                staticClass: "chat-room-title"
+                                                key: "ROUTER" + index,
+                                                staticClass:
+                                                  "col-12 chat-room-item",
+                                                attrs: {
+                                                  to:
+                                                    "/r/" +
+                                                    room.id +
+                                                    "/" +
+                                                    room.roomName +
+                                                    "/" +
+                                                    room.isPublic
+                                                }
                                               },
                                               [
-                                                _c("strong", [
-                                                  _vm._v(_vm._s(room.roomName))
-                                                ]),
-                                                _vm._v(" "),
-                                                room.joined > 0
-                                                  ? [
+                                                _c("div", { key: index }, [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "chat-room-title"
+                                                    },
+                                                    [
+                                                      _c("strong", [
+                                                        _vm._v(
+                                                          _vm._s(room.roomName)
+                                                        )
+                                                      ]),
+                                                      _vm._v(" "),
+                                                      room.joined > 0
+                                                        ? [
+                                                            _vm._v(
+                                                              "\n                                                            ( Joined )\n                                                        "
+                                                            )
+                                                          ]
+                                                        : _vm._e()
+                                                    ],
+                                                    2
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "chat-room-details"
+                                                    },
+                                                    [
                                                       _vm._v(
-                                                        "\n                                                        ( Joined )\n                                                    "
-                                                      )
-                                                    ]
-                                                  : _vm._e()
-                                              ],
-                                              2
-                                            ),
-                                            _vm._v(" "),
-                                            _c(
-                                              "div",
-                                              {
-                                                staticClass: "chat-room-details"
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "\n                                                    " +
-                                                    _vm._s(
-                                                      room.participants || 0
-                                                    ) +
-                                                    " / 30 participants • \n                                                    "
-                                                ),
-                                                room.isPublic == 0
-                                                  ? [
-                                                      _c("ion-icon", {
-                                                        attrs: {
-                                                          name:
-                                                            "lock-closed-outline"
-                                                        }
-                                                      }),
+                                                        "\n                                                        " +
+                                                          _vm._s(
+                                                            room.participants ||
+                                                              0
+                                                          ) +
+                                                          " / 30 participants • \n                                                        "
+                                                      ),
+                                                      room.isPublic == 0
+                                                        ? [
+                                                            _c("ion-icon", {
+                                                              attrs: {
+                                                                name:
+                                                                  "lock-closed-outline"
+                                                              }
+                                                            }),
+                                                            _vm._v(
+                                                              " Private\n                                                        "
+                                                            )
+                                                          ]
+                                                        : [
+                                                            _c("ion-icon", {
+                                                              attrs: {
+                                                                name:
+                                                                  "lock-open-outline"
+                                                              }
+                                                            }),
+                                                            _vm._v(
+                                                              " Public\n                                                        "
+                                                            )
+                                                          ]
+                                                    ],
+                                                    2
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "chat-room-details"
+                                                    },
+                                                    [
                                                       _vm._v(
-                                                        " Private\n                                                    "
-                                                      )
+                                                        "\n                                                        Hosted by "
+                                                      ),
+                                                      _c("strong", [
+                                                        _vm._v(
+                                                          _vm._s(room.userName)
+                                                        )
+                                                      ])
                                                     ]
-                                                  : [
-                                                      _c("ion-icon", {
-                                                        attrs: {
-                                                          name:
-                                                            "lock-open-outline"
-                                                        }
-                                                      }),
-                                                      _vm._v(
-                                                        " Public\n                                                    "
-                                                      )
-                                                    ]
-                                              ],
-                                              2
-                                            ),
-                                            _vm._v(" "),
-                                            _c(
-                                              "div",
-                                              {
-                                                staticClass: "chat-room-details"
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "\n                                                    Hosted by "
-                                                ),
-                                                _c("strong", [
-                                                  _vm._v(_vm._s(room.userName))
+                                                  )
                                                 ])
                                               ]
                                             )
-                                          ])
-                                        ]
-                                      )
-                                    : _vm._e()
-                                ]
-                              })
+                                          : _vm._e()
+                                      ]
+                                    })
+                                  ]
+                                : [
+                                    _c(
+                                      "div",
+                                      { staticClass: "col-12 chat-room-item" },
+                                      [
+                                        _vm._v(
+                                          "\n                                            No active rooms yet.\n                                        "
+                                        )
+                                      ]
+                                    )
+                                  ]
                             ]
-                          : [
-                              _c(
-                                "div",
-                                { staticClass: "col-12 chat-room-item" },
-                                [
-                                  _vm._v(
-                                    "\n                                        No active rooms yet.\n                                    "
-                                  )
-                                ]
-                              )
-                            ]
+                          : [_vm._m(2)]
                       ],
                       2
                     )
@@ -39261,7 +39358,50 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-12 chat-room-item" }, [
+      _c("div", { staticClass: "d-flex justify-content-center" }, [
+        _c(
+          "div",
+          { staticClass: "spinner-border", attrs: { role: "status" } },
+          [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-12 chat-room-item" }, [
+      _c("div", { staticClass: "d-flex justify-content-center" }, [
+        _c(
+          "div",
+          { staticClass: "spinner-border", attrs: { role: "status" } },
+          [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-12 chat-room-item" }, [
+      _c("div", { staticClass: "d-flex justify-content-center" }, [
+        _c(
+          "div",
+          { staticClass: "spinner-border", attrs: { role: "status" } },
+          [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+        )
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -39364,7 +39504,7 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "card-body", attrs: { id: "chatLogs" } }),
+    _vm._m(0),
     _vm._v(" "),
     _vm.joined
       ? _c("div", { staticClass: "card-footer" }, [
@@ -39373,12 +39513,11 @@ var render = function() {
               staticClass: "form-control",
               attrs: {
                 type: "text",
-                placeholder:
-                  "Say something about " + _vm.route.room_name + " ..."
+                placeholder: "Say something to " + _vm.route.room_name + " ..."
               }
             }),
             _vm._v(" "),
-            _vm._m(0)
+            _vm._m(1)
           ])
         ])
       : _c("div", { staticClass: "card-footer" }, [
@@ -39433,6 +39572,20 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-body", attrs: { id: "chatLogs" } }, [
+      _c("div", { staticClass: "d-flex justify-content-center" }, [
+        _c(
+          "div",
+          { staticClass: "spinner-border", attrs: { role: "status" } },
+          [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+        )
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

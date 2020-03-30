@@ -16,11 +16,15 @@
         </div>
 
         <div class="card-body" id="chatLogs">
-
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
         </div>
         <div class="card-footer" v-if="joined">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" :placeholder="`Say something about ${route.room_name} ...`">
+                <input type="text" class="form-control" :placeholder="`Say something to ${route.room_name} ...`">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button">Send</button>
                 </div>
