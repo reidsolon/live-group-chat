@@ -338,7 +338,6 @@ export default {
             // -- JOINED ROOM LISTENER
             const joinedRoomListener = this.pusherVal.subscribe(`join-channel-${this.data.userData.id}`)
             joinedRoomListener.bind('room-joined', (data) => {
-                console.log(data)
                 this.$toastr.i(`${data.user.name} has joined your room!`, `Room ${data.channel[0].roomName}`)
             })
             

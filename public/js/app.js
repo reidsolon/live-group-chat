@@ -2252,8 +2252,6 @@ __webpack_require__.r(__webpack_exports__);
 
       var joinedRoomListener = this.pusherVal.subscribe("join-channel-".concat(this.data.userData.id));
       joinedRoomListener.bind('room-joined', function (data) {
-        console.log(data);
-
         _this5.$toastr.i("".concat(data.user.name, " has joined your room!"), "Room ".concat(data.channel[0].roomName));
       });
     },
@@ -56795,7 +56793,7 @@ __webpack_require__.r(__webpack_exports__);
 // LIVE GROUP CHAT - PUSHER CONFIG 
 // - RAY ANTHONY SOLON
 // ------------------------
-Pusher.logToConsole = true; //console debugging
+Pusher.logToConsole = false; //console debugging
 
 var pusher = new Pusher('35176be266592e80efd7', {
   cluster: 'ap1',
