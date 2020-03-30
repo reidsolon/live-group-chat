@@ -2157,6 +2157,7 @@ __webpack_require__.r(__webpack_exports__);
       },
       // loading
       loading: {
+        availableLoad: false,
         myRoomLoaded: false,
         activeRoomLoaded: false
       },
@@ -2244,7 +2245,7 @@ __webpack_require__.r(__webpack_exports__);
     availability: function availability() {
       var _this4 = this;
 
-      this.loading = true;
+      this.loading.availableLoad = true;
       var val = Object(_includes_validation__WEBPACK_IMPORTED_MODULE_1__["validate"])('required');
 
       if (val) {
@@ -38783,7 +38784,7 @@ var render = function() {
                     [_vm._v("Check availability")]
                   ),
                   _vm._v(" "),
-                  _vm.loading
+                  _vm.loading.availableLoad
                     ? _c(
                         "div",
                         {

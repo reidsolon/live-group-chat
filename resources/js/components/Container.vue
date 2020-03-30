@@ -22,7 +22,7 @@
                     </div>
                     <template>
                         <a @click="availability()">Check availability</a>
-                            <div v-if="loading" class="spinner-border" role="status">
+                            <div v-if="loading.availableLoad" class="spinner-border" role="status">
                                 <span class="sr-only">Loading...</span>
                             </div>
                             <template v-if="validation.isChecked && !loading">
@@ -247,6 +247,7 @@ export default {
 
             // loading
             loading: {
+                availableLoad: false,
                 myRoomLoaded: false,
                 activeRoomLoaded: false,
             },
@@ -328,7 +329,7 @@ export default {
             }
         },  
         availability() {
-            this.loading = true
+            this.loading.availableLoad = true
             var val = validate('required')
             if(val) {
 
