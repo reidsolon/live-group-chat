@@ -324,9 +324,9 @@ export default {
             const newRoomListener = this.pusherVal.subscribe('all-users')
             newRoomListener.bind('new-room', (data) => {
                 if(data.room.isPublic == 1) {
-                    this.$toastr.i(`${data.user} added a new public room!`, `Room Name ${data.room.roomName}`)
+                    this.$toastr.i(`${data.user.name} added a new public room!`, `Room Name ${data.room.roomName}`)
                 } else {
-                    this.$toastr.i(`${data.user} added a new private room!`, `Room Name ${data.room.roomName}`)
+                    this.$toastr.i(`${data.user.name} added a new private room!`, `Room Name ${data.room.roomName}`)
                 }
                 
                 this.getUserRooms()

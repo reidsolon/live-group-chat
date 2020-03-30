@@ -97,7 +97,7 @@ class ChatRoomController extends Controller
                 if($id) {
 
                     //trigger an even
-                    event(new NewRoomEvent(Auth::user()->name, $insert));
+                    event(new NewRoomEvent(Auth::user(), $insert));
 
                     $this->request['status'] = 1;
                     $this->request['message'] = 'Room successfully created';

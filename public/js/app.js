@@ -2238,9 +2238,9 @@ __webpack_require__.r(__webpack_exports__);
       var newRoomListener = this.pusherVal.subscribe('all-users');
       newRoomListener.bind('new-room', function (data) {
         if (data.room.isPublic == 1) {
-          _this5.$toastr.i("".concat(data.user, " added a new public room!"), "Room Name ".concat(data.room.roomName));
+          _this5.$toastr.i("".concat(data.user.name, " added a new public room!"), "Room Name ".concat(data.room.roomName));
         } else {
-          _this5.$toastr.i("".concat(data.user, " added a new private room!"), "Room Name ".concat(data.room.roomName));
+          _this5.$toastr.i("".concat(data.user.name, " added a new private room!"), "Room Name ".concat(data.room.roomName));
         }
 
         _this5.getUserRooms();
@@ -56773,11 +56773,16 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pusher", function() { return pusher; });
-Pusher.logToConsole = true;
+// -------------------------
+// LIVE GROUP CHAT - PUSHER CONFIG 
+// - RAY ANTHONY SOLON
+// ------------------------
+Pusher.logToConsole = false; //console debugging
+
 var pusher = new Pusher('35176be266592e80efd7', {
   cluster: 'ap1',
   forceTLS: true
-});
+}); //--END CONFIG--------------
 
 /***/ }),
 
