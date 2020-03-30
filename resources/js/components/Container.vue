@@ -45,7 +45,7 @@
                         <div class="card">
                             <div class="card-header container-fluid">
                                 <div class="row">
-                                    <div class="col-6" style="vertical-align: middle !important;">My Rooms</div>
+                                    <div class="col-6" style="vertical-align: middle !important;"><ion-icon name="home-outline"></ion-icon> My Rooms</div>
                                 </div>
                             </div>
 
@@ -64,10 +64,10 @@
                                                     <div class="chat-room-details">
                                                         {{myroom.participants || 0}}/ 30 participants • 
                                                         <template v-if="myroom.isPublic == 0">
-                                                            Private ({{myroom.randomPass}})
+                                                            <ion-icon name="lock-closed-outline"></ion-icon> Private ({{myroom.randomPass}})
                                                         </template>
                                                         <template v-else>
-                                                            Public
+                                                            <ion-icon name="lock-open-outline"></ion-icon> Public
                                                         </template>
                                                     </div>
                                                 </div>
@@ -87,7 +87,7 @@
                         <div class="card">
                             <div class="card-header container-fluid">
                                 <div class="row">
-                                    <div class="col-6" style="vertical-align: middle !important;">Joined Rooms</div>
+                                    <div class="col-12" style="vertical-align: middle !important;"><ion-icon name="log-in-outline"></ion-icon> Joined Rooms</div>
                                 </div>
                             </div>
 
@@ -106,10 +106,10 @@
                                                     <div class="chat-room-details">
                                                         {{room.participants || 0}} / 30 participants • 
                                                         <template v-if="room.isPublic == 0">
-                                                            Private
+                                                            <ion-icon name="lock-closed-outline"></ion-icon> Private
                                                         </template>
                                                         <template v-else>
-                                                            Public
+                                                            <ion-icon name="lock-open-outline"></ion-icon> Public
                                                         </template>
                                                     </div>
                                                     <div class="chat-room-details">
@@ -132,7 +132,7 @@
                         <div class="card">
                            <div class="card-header container-fluid">
                                 <div class="row">
-                                    <div class="col-6" style="vertical-align: middle !important;">Active Rooms</div>
+                                    <div class="col-12" style="vertical-align: middle !important;"><ion-icon name="home-outline"></ion-icon> Active Rooms</div>
                                 </div>
                             </div>
 
@@ -151,10 +151,10 @@
                                                     <div class="chat-room-details">
                                                         {{room.participants || 0}} / 30 participants • 
                                                         <template v-if="room.isPublic == 0">
-                                                            Private
+                                                            <ion-icon name="lock-closed-outline"></ion-icon> Private
                                                         </template>
                                                         <template v-else>
-                                                            Public
+                                                            <ion-icon name="lock-open-outline"></ion-icon> Public
                                                         </template>
                                                     </div>
                                                     <div class="chat-room-details">
@@ -190,6 +190,7 @@
     </div>
 </template>
 <script>
+import {pusher} from '../includes/pusher'
 import {validate, makeid} from '../includes/validation'
 import Modal from '../reusable/Modal'
 export default {
@@ -199,6 +200,7 @@ export default {
     data() {
         return {
             data: {
+                pusherVal: Object,
                 isPrivate: false,
                 name: '',
                 availability: false,
@@ -267,15 +269,16 @@ export default {
                         if(res.data.status == 1) {
                             this.getUserRooms()
                             document.querySelector("button[data-dismiss='modal']").click()
+                            this.$toastr.s(res.data.message, "Success")
                         } else {
-                            alert(res.data.message)
+                            this.$toastr.e(res.data.message, "Failed")
                         }
                     } else {
-                        console.error(res.status)
+                        this.$toastr.w(`Request failure with the status code of ${res.status}`, "Success Toast Title")
                     }
                 })
                 .catch( err => {
-                    console.error(err)
+                    this.$toastr.e(err)
                 })
             }
         },  
@@ -305,7 +308,7 @@ export default {
                                 this.isReady = false
                             }
                         } else {
-                            console.error(res.status)
+                            this.$toastr.w(`Error with status code of ${res.status}`)
                         }
                     })
                     .catch( err => {
@@ -314,10 +317,26 @@ export default {
                 }
                 
             }
+        },
+        _initPusher() {
+            this.pusherVal = pusher
+
+            const newRoomListener = this.pusherVal.subscribe('all-users')
+            newRoomListener.bind('new-room', (data) => {
+                if(data.room.isPublic == 1) {
+                    this.$toastr.i(`${data.user} added a new public room!`, `Room Name ${data.room.roomName}`)
+                } else {
+                    this.$toastr.i(`${data.user} added a new private room!`, `Room Name ${data.room.roomName}`)
+                }
+                
+                this.getUserRooms()
+                this.getActiveRooms()
+            })
         }
     },
     mounted() {
         this.getUserRooms()
+        this._initPusher()
         this.getActiveRooms()
     }
 

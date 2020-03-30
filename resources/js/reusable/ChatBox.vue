@@ -9,7 +9,7 @@
                     </template>
                 </div>
                 <div class="col-6" v-if="route.room_type == 'm'" style="text-align: right;">
-                    Settings
+                    <ion-icon name="settings-outline"></ion-icon>
                 </div>
             </div>
             
@@ -77,10 +77,8 @@ export default {
             .then( res => {
                 if(res.status == 200) {
                     if(res.data.status == 1) {
-                        console.log(res.data.message)
                         this.joined = true
                     } else {
-                        console.log(res.data.message)
                         this.joined = false
                     }
                 } else {
@@ -102,10 +100,11 @@ export default {
             .then( res => {
                 if(res.status == 200) {
                     if(res.data.status == 1) {
+                        this.$toastr.s(res.data.message, "Success");
                         this.$parent.getActiveRooms()
                         this.checkIfJoined()
                     } else {
-                        alert(res.data.message)
+                        this.$toastr.e(res.data.message, "Failed");
                     }
                 } else { 
 
@@ -118,7 +117,7 @@ export default {
     },
     mounted() {
         this.setRoute()
-        console.log(this.$parent)
+        
     }
 }
 </script>

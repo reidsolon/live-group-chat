@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Events\NewRoomEvent;
 
 class ChatRoomController extends Controller
 {
@@ -94,6 +95,10 @@ class ChatRoomController extends Controller
                 );
                 $id = DB::table($this->tableName)->insertGetId($insert);
                 if($id) {
+
+                    //trigger an even
+                    event(new NewRoomEvent(Auth::user()->name, $insert));
+
                     $this->request['status'] = 1;
                     $this->request['message'] = 'Room successfully created';
                     $this->request['roomPassword'] = $request->randomPass; 
