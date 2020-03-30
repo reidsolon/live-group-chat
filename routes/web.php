@@ -38,3 +38,5 @@ Route::post('/room/join', 'ChatRoomController@joinRoom');
 
 Auth::routes();
 Route::get('/chatroom', 'HomeController@index')->name('home');
+
+Route::get('/user/getCurrentUser', 'UserController@getCurrentUser');

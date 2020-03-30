@@ -2112,6 +2112,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       data: {
+        userData: Object,
         pusherVal: Object,
         isPrivate: false,
         name: '',
@@ -2234,7 +2235,8 @@ __webpack_require__.r(__webpack_exports__);
     _initPusher: function _initPusher() {
       var _this5 = this;
 
-      this.pusherVal = _includes_pusher__WEBPACK_IMPORTED_MODULE_0__["pusher"];
+      this.pusherVal = _includes_pusher__WEBPACK_IMPORTED_MODULE_0__["pusher"]; // -- NEW ROOM LISTENER
+
       var newRoomListener = this.pusherVal.subscribe('all-users');
       newRoomListener.bind('new-room', function (data) {
         if (data.room.isPublic == 1) {
@@ -2246,15 +2248,34 @@ __webpack_require__.r(__webpack_exports__);
         _this5.getUserRooms();
 
         _this5.getActiveRooms();
+      }); // -- JOINED ROOM LISTENER
+
+      var joinedRoomListener = this.pusherVal.subscribe("join-channel-".concat(this.data.userData.id));
+      joinedRoomListener.bind('room-joined', function (data) {
+        console.log(data);
+
+        _this5.$toastr.i("".concat(data.user.name, " has joined your room!"), "Room ".concat(data.channel[0].roomName));
       });
+    },
+    _getCurrentUser: function _getCurrentUser() {
+      var _this6 = this;
+
+      axios.get('/user/getCurrentUser').then(function (res) {
+        if (res.status == 200) {
+          _this6.data.userData = res.data;
+
+          _this6._initPusher();
+        } else {
+          _this6.$toastr.w("Error with status code of ".concat(res.status), 'User Data');
+        }
+      })["catch"](function (err) {});
     }
   },
   mounted: function mounted() {
     this.getUserRooms();
-
-    this._initPusher();
-
     this.getActiveRooms();
+
+    this._getCurrentUser();
   }
 });
 
@@ -39208,7 +39229,31 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _vm._m(0)
+            _c(
+              "div",
+              { staticClass: "col-12", staticStyle: { "margin-top": "10px" } },
+              [
+                _c("div", { staticClass: "card" }, [
+                  _c("div", { staticClass: "card-body" }, [
+                    _vm._v("\n                            Developed by "),
+                    _c(
+                      "a",
+                      {
+                        attrs: {
+                          href: "https://github.com/reidsolon",
+                          target: "_blank"
+                        }
+                      },
+                      [
+                        _c("ion-icon", { attrs: { name: "logo-github" } }),
+                        _vm._v(" Ray Anthony Solon.")
+                      ],
+                      1
+                    )
+                  ])
+                ])
+              ]
+            )
           ])
         ]),
         _vm._v(" "),
@@ -39218,34 +39263,7 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "col-12", staticStyle: { "margin-top": "10px" } },
-      [
-        _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _vm._v("\n                            Developed by "),
-            _c(
-              "a",
-              {
-                attrs: {
-                  href: "https://github.com/reidsolon",
-                  target: "_blank"
-                }
-              },
-              [_vm._v("Ray Anthony Solon.")]
-            )
-          ])
-        ])
-      ]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -56777,7 +56795,7 @@ __webpack_require__.r(__webpack_exports__);
 // LIVE GROUP CHAT - PUSHER CONFIG 
 // - RAY ANTHONY SOLON
 // ------------------------
-Pusher.logToConsole = false; //console debugging
+Pusher.logToConsole = true; //console debugging
 
 var pusher = new Pusher('35176be266592e80efd7', {
   cluster: 'ap1',

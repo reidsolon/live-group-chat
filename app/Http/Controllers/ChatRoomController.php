@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Events\NewRoomEvent;
+use App\Events\JoinedRoom;
 
 class ChatRoomController extends Controller
 {
@@ -150,6 +151,10 @@ class ChatRoomController extends Controller
                 );
                 $id = DB::table('chat_room_participants')->insertGetId($insert);
                 if($id) {
+                    
+                    //trigger event
+                    event(new JoinedRoom(Auth::user(), $room_pass));
+
                     $this->request['status'] = 1;
                     $this->request['message'] = 'Room successfully joined';
                 } else {

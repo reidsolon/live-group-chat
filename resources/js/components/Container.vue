@@ -176,7 +176,7 @@
                     <div class="col-12" style="margin-top: 10px;">
                         <div class="card">
                             <div class="card-body">
-                                Developed by <a href="https://github.com/reidsolon" target="_blank">Ray Anthony Solon.</a> 
+                                Developed by <a href="https://github.com/reidsolon" target="_blank"><ion-icon name="logo-github"></ion-icon> Ray Anthony Solon.</a> 
                             </div>
                         </div>
                     </div>
@@ -200,6 +200,7 @@ export default {
     data() {
         return {
             data: {
+                userData: Object,
                 pusherVal: Object,
                 isPrivate: false,
                 name: '',
@@ -321,6 +322,7 @@ export default {
         _initPusher() {
             this.pusherVal = pusher
 
+            // -- NEW ROOM LISTENER
             const newRoomListener = this.pusherVal.subscribe('all-users')
             newRoomListener.bind('new-room', (data) => {
                 if(data.room.isPublic == 1) {
@@ -332,12 +334,34 @@ export default {
                 this.getUserRooms()
                 this.getActiveRooms()
             })
+
+            // -- JOINED ROOM LISTENER
+            const joinedRoomListener = this.pusherVal.subscribe(`join-channel-${this.data.userData.id}`)
+            joinedRoomListener.bind('room-joined', (data) => {
+                console.log(data)
+                this.$toastr.i(`${data.user.name} has joined your room!`, `Room ${data.channel[0].roomName}`)
+            })
+            
+        },
+        _getCurrentUser() {
+            axios.get('/user/getCurrentUser')
+            .then( res => {
+                if(res.status == 200) {
+                    this.data.userData = res.data
+                    this._initPusher()
+                } else {
+                    this.$toastr.w(`Error with status code of ${res.status}`, 'User Data')
+                }
+            })
+            .catch( err => {
+
+            })
         }
     },
     mounted() {
         this.getUserRooms()
-        this._initPusher()
         this.getActiveRooms()
+        this._getCurrentUser()
     }
 
 }
