@@ -57,7 +57,7 @@ class ChatRoomController extends Controller
                     ->leftJoin('users','users.id', '=',$this->tableName.'.participantID')
                     ->leftJoin('chat_room_participants', 'chat_room_participants.chatroomID', '=', $this->tableName.'.id')
                     ->where('created_by', '!=', Auth::user()->id)
-                    ->groupBy($this->tableName.'.id')
+                    ->groupBy($this->tableName.'.id', 'users.name')
                     ->get();
 
         if($result) {
