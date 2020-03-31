@@ -151,12 +151,14 @@ export default {
             const newMessage = this.pusherVal.subscribe(`chat-${this.route.room_id}`)
             newMessage.bind('new-message', (data) => {
                 this._getRoomMessages(this.route.room_id)
+                
+                this.data.someoneIsTyping.user = {}
+                this.data.someoneIsTyping.bool = false
             })
 
             // -- LISTEN TYPING
             const typing = this.pusherVal.subscribe(`typing-room-${this.route.room_id}`)
             typing.bind('is-typing', (data) => {
-                
                 if(data.isTyping) {
                     this.data.someoneIsTyping.bool = true
                     this.data.someoneIsTyping.user = data.user
@@ -164,6 +166,8 @@ export default {
                     this.data.someoneIsTyping.bool = false
                     this.data.someoneIsTyping.user = data.user
                 }
+
+                this.scrollTop()
             })
             
         },
@@ -235,6 +239,7 @@ export default {
             })
         },
         sendMessage() {
+            
             this.data.sending = true
             if(this.data.message != '' && this.data.message != null) {
                 const payload = {
@@ -247,7 +252,6 @@ export default {
                     if(res.status == 200) {
                         if(res.data.status == 1) {
                             this.data.message = ''
-                            this.sendTypingEvent()
                         } else {
                             this.$toastr.w(res.data.message)
                         }

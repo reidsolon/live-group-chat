@@ -2539,6 +2539,9 @@ __webpack_require__.r(__webpack_exports__);
       var newMessage = this.pusherVal.subscribe("chat-".concat(this.route.room_id));
       newMessage.bind('new-message', function (data) {
         _this._getRoomMessages(_this.route.room_id);
+
+        _this.data.someoneIsTyping.user = {};
+        _this.data.someoneIsTyping.bool = false;
       }); // -- LISTEN TYPING
 
       var typing = this.pusherVal.subscribe("typing-room-".concat(this.route.room_id));
@@ -2550,6 +2553,8 @@ __webpack_require__.r(__webpack_exports__);
           _this.data.someoneIsTyping.bool = false;
           _this.data.someoneIsTyping.user = data.user;
         }
+
+        _this.scrollTop();
       });
     },
     sendTypingEvent: function sendTypingEvent() {
@@ -2634,8 +2639,6 @@ __webpack_require__.r(__webpack_exports__);
           if (res.status == 200) {
             if (res.data.status == 1) {
               _this4.data.message = '';
-
-              _this4.sendTypingEvent();
             } else {
               _this4.$toastr.w(res.data.message);
             }
