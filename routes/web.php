@@ -15,11 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
 
-    if(session()->get('participant')) {
-        echo 'chat room';
-    } else {
-        return view('welcome');
-    }
+    return redirect('/chatroom');
     
 });
 

@@ -53,8 +53,8 @@
                                 <div class="row">
                                     <div class="col-12 chat-room-item" data-toggle="modal" data-target="#exampleModal">
                                         Add New Room +
-                                    </div>
-                                    <template v-if="loading.myRoomLoaded">
+                                    </div> 
+                                    <template v-if="loading.myRoomLoaded"> 
                                         <template v-if="data.myRooms.length > 0">
                                             <template v-for="(myroom, index) in data.myRooms">
                                                 <router-link class="col-12 chat-room-item" :to="'/m/'+myroom.id+'/'+myroom.roomName+'/'+myroom.isPublic" :key="'ROUTER'+index">

@@ -62181,7 +62181,7 @@ __webpack_require__.r(__webpack_exports__);
 // LIVE GROUP CHAT - PUSHER CONFIG 
 // - RAY ANTHONY SOLON
 // ------------------------
-Pusher.logToConsole = true; //console debugging
+Pusher.logToConsole = false; //console debugging
 
 var pusher = new Pusher('35176be266592e80efd7', {
   cluster: 'ap1',
