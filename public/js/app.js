@@ -2148,6 +2148,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2474,6 +2482,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2491,6 +2514,12 @@ __webpack_require__.r(__webpack_exports__);
         room_pass: ''
       },
       data: {
+        someoneIsTyping: {
+          user: {},
+          bool: false
+        },
+        isBlank: false,
+        isTyping: false,
         parentData: Object,
         messages_row: [],
         sending: false,
@@ -2510,7 +2539,51 @@ __webpack_require__.r(__webpack_exports__);
       var newMessage = this.pusherVal.subscribe("chat-".concat(this.route.room_id));
       newMessage.bind('new-message', function (data) {
         _this._getRoomMessages(_this.route.room_id);
+      }); // -- LISTEN TYPING
+
+      var typing = this.pusherVal.subscribe("typing-room-".concat(this.route.room_id));
+      typing.bind('is-typing', function (data) {
+        if (data.isTyping) {
+          _this.data.someoneIsTyping.bool = true;
+          _this.data.someoneIsTyping.user = data.user;
+        } else {
+          _this.data.someoneIsTyping.bool = false;
+          _this.data.someoneIsTyping.user = data.user;
+        }
       });
+    },
+    sendTypingEvent: function sendTypingEvent() {
+      var _this2 = this;
+
+      var payload = {};
+
+      if (this.data.message != '' && this.data.message.length == 1) {
+        this.data.isTyping = true;
+        payload = {
+          room_id: this.route.room_id,
+          isTyping: this.data.isTyping
+        };
+        axios.post('/isTyping', payload).then(function (res) {
+          if (res.status == 200) {
+            _this2.data.isBlank = false;
+          }
+        })["catch"](function (err) {
+          console.log(err);
+        });
+      } else if (this.data.message == '' && !this.data.isBlank) {
+        this.data.isTyping = false;
+        payload = {
+          room_id: this.route.room_id,
+          isTyping: this.data.isTyping
+        };
+        axios.post('/isTyping', payload).then(function (res) {
+          if (res.status == 200) {
+            _this2.data.isBlank = true;
+          }
+        })["catch"](function (err) {
+          console.log(err);
+        });
+      }
     },
     scrollTop: function scrollTop() {
       $(".msger-chat").stop().animate({
@@ -2518,7 +2591,7 @@ __webpack_require__.r(__webpack_exports__);
       }, 1500);
     },
     _getRoomMessages: function _getRoomMessages(id) {
-      var _this2 = this;
+      var _this3 = this;
 
       var payload = {
         room_id: this.route.room_id
@@ -2526,27 +2599,27 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/room/getMessages', payload).then(function (res) {
         if (res.status == 200) {
           if (res.data.status == 1) {
-            _this2.data.messages_row = res.data.rows;
+            _this3.data.messages_row = res.data.rows;
 
-            _this2.scrollTop();
+            _this3.scrollTop();
           } else if (res.data.status == -1) {
-            _this2.data.messages_row = [];
+            _this3.data.messages_row = [];
 
-            _this2.$toastr.w(res.data.message);
+            _this3.$toastr.w(res.data.message);
           } else {
-            _this2.data.messages_row = [];
+            _this3.data.messages_row = [];
 
-            _this2.toastr.w(res.data.message);
+            _this3.toastr.w(res.data.message);
           }
         } else {
-          _this2.toastr.w("Error with status code of ".concat(res.status));
+          _this3.toastr.w("Error with status code of ".concat(res.status));
         }
       })["catch"](function (err) {
-        _this2.$toastr.e(err);
+        _this3.$toastr.e(err);
       });
     },
     sendMessage: function sendMessage() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.data.sending = true;
 
@@ -2556,19 +2629,21 @@ __webpack_require__.r(__webpack_exports__);
           room_id: this.route.room_id
         };
         axios.post('/user/sendMessage', payload).then(function (res) {
-          _this3.data.sending = false;
+          _this4.data.sending = false;
 
           if (res.status == 200) {
             if (res.data.status == 1) {
-              _this3.data.message = '';
+              _this4.data.message = '';
+
+              _this4.sendTypingEvent();
             } else {
-              _this3.$toastr.w(res.data.message);
+              _this4.$toastr.w(res.data.message);
             }
           } else {
-            _this3.$toastr.w("Status code ".concat(res.status), 'Request Failed');
+            _this4.$toastr.w("Status code ".concat(res.status), 'Request Failed');
           }
         })["catch"](function (err) {
-          _this3.$toastr.e(err);
+          _this4.$toastr.e(err);
         });
       } else {
         this.$toastr.w('You have empty message!', 'Dont be silly!');
@@ -2585,7 +2660,7 @@ __webpack_require__.r(__webpack_exports__);
       this._initPusher();
     },
     checkIfJoined: function checkIfJoined() {
-      var _this4 = this;
+      var _this5 = this;
 
       var payload = {
         roomID: this.route.room_id
@@ -2593,13 +2668,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/room/isJoined', payload).then(function (res) {
         if (res.status == 200) {
           if (res.data.status == 1) {
-            _this4.joined = true;
+            _this5.joined = true;
 
-            if (_this4.joined) {
-              _this4._getRoomMessages(_this4.route.room_id);
+            if (_this5.joined) {
+              _this5._getRoomMessages(_this5.route.room_id);
             }
           } else {
-            _this4.joined = false;
+            _this5.joined = false;
           }
         } else {
           console.log(res.status);
@@ -2609,7 +2684,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     joinRoom: function joinRoom() {
-      var _this5 = this;
+      var _this6 = this;
 
       var payload = {
         room_id: this.route.room_id,
@@ -2619,13 +2694,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/room/join', payload).then(function (res) {
         if (res.status == 200) {
           if (res.data.status == 1) {
-            _this5.$toastr.s(res.data.message, "Success");
+            _this6.$toastr.s(res.data.message, "Success");
 
-            _this5.$parent.getActiveRooms();
+            _this6.$parent.getActiveRooms();
 
-            _this5.checkIfJoined();
+            _this6.checkIfJoined();
           } else {
-            _this5.$toastr.e(res.data.message, "Failed");
+            _this6.$toastr.e(res.data.message, "Failed");
           }
         } else {}
       })["catch"](function (err) {
@@ -39472,7 +39547,9 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _vm._m(3)
+            _vm._m(3),
+            _vm._v(" "),
+            _vm._m(4)
           ])
         ]),
         _vm._v(" "),
@@ -39568,7 +39645,25 @@ var staticRenderFns = [
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-body" }, [
             _vm._v(
-              "\n                            Having fun with this app? Why don't you buy me a coffe!\n                        "
+              "\n                            Having fun with this app? Why don't you buy me a coffe! \n                        "
+            )
+          ])
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "col-12", staticStyle: { "margin-top": "10px" } },
+      [
+        _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _vm._v(
+              "\n                            Let me know about your ideas, suggestions or improvements. Send me a slack message through email.\n                        "
             )
           ])
         ])
@@ -39685,58 +39780,74 @@ var render = function() {
         [
           _vm.data.messages_row.length < 1
             ? [_vm._m(0)]
-            : _vm._l(_vm.data.messages_row, function(message, index) {
-                return _c(
-                  "div",
-                  {
-                    key: index,
-                    staticClass: "msg",
-                    class: {
-                      "right-msg":
-                        message.participantID == _vm.data.parentData.userData.id
-                    }
-                  },
-                  [
-                    message.participantID != _vm.data.parentData.userData.id
-                      ? _c("div", {
-                          staticClass: "msg-img",
-                          staticStyle: {
-                            "background-image":
-                              "url(https://image.flaticon.com/icons/svg/145/145867.svg)"
-                          }
-                        })
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "msg-bubble" }, [
-                      _c("div", { staticClass: "msg-info" }, [
-                        _c("div", { staticClass: "msg-info-name" }, [
-                          _vm._v(_vm._s(message.userName))
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "msg-info-time" }, [
-                          _vm._v(
-                            _vm._s(
-                              _vm._f("moment")(
-                                message.created_at,
-                                "from",
-                                "now"
+            : [
+                _vm._l(_vm.data.messages_row, function(message, index) {
+                  return _c(
+                    "div",
+                    {
+                      key: index,
+                      staticClass: "msg",
+                      class: {
+                        "right-msg":
+                          message.participantID ==
+                          _vm.data.parentData.userData.id
+                      }
+                    },
+                    [
+                      message.participantID != _vm.data.parentData.userData.id
+                        ? _c("div", {
+                            staticClass: "msg-img",
+                            staticStyle: {
+                              "background-image":
+                                "url(https://image.flaticon.com/icons/svg/145/145867.svg)"
+                            }
+                          })
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "msg-bubble" }, [
+                        _c("div", { staticClass: "msg-info" }, [
+                          _c("div", { staticClass: "msg-info-name" }, [
+                            _vm._v(_vm._s(message.userName))
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "msg-info-time" }, [
+                            _vm._v(
+                              _vm._s(
+                                _vm._f("moment")(
+                                  message.created_at,
+                                  "from",
+                                  "now"
+                                )
                               )
                             )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "msg-text" }, [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(message.message) +
+                              "\n                            "
                           )
                         ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "msg-text" }, [
-                        _vm._v(
-                          "\n                                " +
-                            _vm._s(message.message) +
-                            "\n                            "
-                        )
                       ])
-                    ])
-                  ]
-                )
-              })
+                    ]
+                  )
+                }),
+                _vm._v(" "),
+                _vm.data.someoneIsTyping.bool &&
+                _vm.data.someoneIsTyping.user.id !=
+                  _vm.data.parentData.userData.id
+                  ? _c(
+                      "div",
+                      {
+                        staticClass: "msg",
+                        attrs: { alt: "Someone is typing.." }
+                      },
+                      [_vm._m(1)]
+                    )
+                  : _vm._e()
+              ]
         ],
         2
       )
@@ -39761,6 +39872,9 @@ var render = function() {
               },
               domProps: { value: _vm.data.message },
               on: {
+                keyup: function($event) {
+                  return _vm.sendTypingEvent()
+                },
                 input: function($event) {
                   if ($event.target.composing) {
                     return
@@ -39787,7 +39901,7 @@ var render = function() {
                     ? _c(
                         "div",
                         { staticClass: "d-flex justify-content-center" },
-                        [_vm._m(1)]
+                        [_vm._m(2)]
                       )
                     : _c("div", [
                         _vm._v(
@@ -39873,6 +39987,27 @@ var staticRenderFns = [
           _vm._v(
             "\n                                Hi, welcome to Live Chat Room!\n                            "
           )
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "msg-bubble" }, [
+      _c("div", { staticClass: "msg-text" }, [
+        _c("div", { staticClass: "ticontainer" }, [
+          _c("div", { staticClass: "tiblock" }, [
+            _vm._v(
+              "\n                                        Someone is typing  \n                                        "
+            ),
+            _c("div", { staticClass: "tidot" }),
+            _vm._v(" "),
+            _c("div", { staticClass: "tidot" }),
+            _vm._v(" "),
+            _c("div", { staticClass: "tidot" })
+          ])
         ])
       ])
     ])

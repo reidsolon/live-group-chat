@@ -211,7 +211,15 @@
                     <div class="col-12" style="margin-top: 10px;">
                         <div class="card">
                             <div class="card-body">
-                                Having fun with this app? Why don't you buy me a coffe!
+                                Having fun with this app? Why don't you buy me a coffe! 
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12" style="margin-top: 10px;">
+                        <div class="card">
+                            <div class="card-body">
+                                Let me know about your ideas, suggestions or improvements. Send me a slack message through email.
                             </div>
                         </div>
                     </div>

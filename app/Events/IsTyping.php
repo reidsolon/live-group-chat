@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class IsTyping
+class IsTyping implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,9 +19,16 @@ class IsTyping
      *
      * @return void
      */
-    public function __construct()
+
+    public $user;
+    public $channel;
+    public $isTyping;
+
+    public function __construct($user, $channel, $isTyping)
     {
-        //
+        $this->user = $user;
+        $this->isTyping = $isTyping;
+        $this->channel = $channel;
     }
 
     /**
@@ -31,6 +38,11 @@ class IsTyping
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new Channel('typing-room-'.$this->channel);
+    }
+
+    public function broadcastAs()
+    {
+        return 'is-typing';
     }
 }

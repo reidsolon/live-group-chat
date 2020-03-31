@@ -42,3 +42,4 @@ Route::get('/chatroom', 'HomeController@index')->name('home');
 Route::get('/user/getCurrentUser', 'UserController@getCurrentUser');
 Route::post('/user/sendMessage', 'ChatRoomController@sendMessage');
 Route::post('/room/getMessages', 'ChatRoomController@getRoomMessages');
+Route::post('/isTyping', 'ChatRoomController@sendTypingEvent');

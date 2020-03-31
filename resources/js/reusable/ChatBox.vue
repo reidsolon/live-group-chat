@@ -61,13 +61,28 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="msg" alt="Someone is typing.." v-if="data.someoneIsTyping.bool && data.someoneIsTyping.user.id != data.parentData.userData.id ">
+                            <div class="msg-bubble">
+                                <div class="msg-text">
+                                    <div class="ticontainer">
+                                        <div class="tiblock">
+                                            Someone is typing &nbsp;
+                                            <div class="tidot"></div>
+                                            <div class="tidot"></div>
+                                            <div class="tidot"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </template>
                     
                 </main>
         </div>
         <div class="card-footer" v-if="joined">
             <div class="input-group">
-                <textarea v-model="data.message" type="text" class="form-control p-1" :placeholder="`Say something to ${route.room_name} ...`"></textarea>
+                <textarea v-model="data.message" @keyup="sendTypingEvent()" type="text" class="form-control p-1" :placeholder="`Say something to ${route.room_name} ...`"></textarea>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button" @click="sendMessage()">
                         <div v-if="data.sending" class="d-flex justify-content-center">
@@ -112,6 +127,12 @@ export default {
                 room_pass: '',
             },
             data: {
+                someoneIsTyping: {
+                    user: {},
+                    bool: false,
+                },
+                isBlank: false,
+                isTyping: false,
                 parentData: Object,
                 messages_row: [],
                 sending: false,
@@ -131,7 +152,59 @@ export default {
             newMessage.bind('new-message', (data) => {
                 this._getRoomMessages(this.route.room_id)
             })
+
+            // -- LISTEN TYPING
+            const typing = this.pusherVal.subscribe(`typing-room-${this.route.room_id}`)
+            typing.bind('is-typing', (data) => {
+                
+                if(data.isTyping) {
+                    this.data.someoneIsTyping.bool = true
+                    this.data.someoneIsTyping.user = data.user
+                } else {
+                    this.data.someoneIsTyping.bool = false
+                    this.data.someoneIsTyping.user = data.user
+                }
+            })
             
+        },
+        sendTypingEvent() {
+            var payload = {}
+            if(this.data.message != '' && this.data.message.length == 1)
+            {
+                this.data.isTyping = true
+                payload = {
+                    room_id: this.route.room_id,
+                    isTyping: this.data.isTyping
+                }
+                
+                axios.post('/isTyping', payload)
+                .then( res => {
+                    if(res.status == 200) {
+                        this.data.isBlank = false
+                    }
+                })
+                .catch( err => {
+                    console.log(err)
+                })
+
+            } else if(this.data.message == '' && !this.data.isBlank) {
+                this.data.isTyping = false
+                payload = {
+                    room_id: this.route.room_id,
+                    isTyping: this.data.isTyping
+                }
+
+                axios.post('/isTyping', payload)
+                .then( res => {
+                    if( res.status == 200) {
+                        this.data.isBlank = true
+                    }
+                })
+                .catch( err => {
+                    console.log(err)
+                })
+
+            }
         },
         scrollTop() {
             $(".msger-chat").stop().animate({ scrollTop: $(".msger-chat")[0].scrollHeight}, 1500);
@@ -174,6 +247,7 @@ export default {
                     if(res.status == 200) {
                         if(res.data.status == 1) {
                             this.data.message = ''
+                            this.sendTypingEvent()
                         } else {
                             this.$toastr.w(res.data.message)
                         }

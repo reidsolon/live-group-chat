@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Events\NewRoomEvent;
 use App\Events\MessageSent;
+use App\Events\IsTyping;
 use App\Events\JoinedRoom;
 
 class ChatRoomController extends Controller
@@ -247,6 +248,32 @@ class ChatRoomController extends Controller
 
         return $this->request;
     }
+
+    public function sendTypingEvent(Request $request)
+    {
+        $this->isAuthenticated();
+
+        if($request) {
+            if($request->isTyping) 
+            {
+                //trigger event
+                event(new IsTyping(Auth::user(), $request->room_id, $request->isTyping));
+                $this->request['status'] = 1;
+                $this->request['message'] = 'Typing..';
+            } else {
+                //trigger event
+                event(new IsTyping(Auth::user(), $request->room_id, $request->isTyping));
+                $this->request['status'] = 0;
+                $this->request['message'] = 'Stopped typing..';
+            }
+        } else {
+            $this->request['status'] = 0;
+            $this->request['message'] = 'Empty payload';
+        }
+        return $this->request;
+    }
+
+
     public function sendMessage(Request $request)
     {
         $this->isAuthenticated();
