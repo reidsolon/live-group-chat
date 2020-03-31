@@ -153,7 +153,7 @@ export default {
                 this._getRoomMessages(this.route.room_id)
                 
                 this.data.someoneIsTyping.user = {}
-                this.data.someoneIsTyping.bool = false
+                this.data.someoneIsTyping.bool = false 
             })
 
             // -- LISTEN TYPING
