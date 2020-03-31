@@ -52,7 +52,7 @@ class ChatRoomController extends Controller
         $result = DB::table($this->tableName)
                     ->select($this->tableName.'.*')
                     ->addSelect('users.name as userName')
-                    ->addSelect((DB::raw('count( ( CASE WHEN chat_room_participants.`participantID` = '.Auth::user()->id.' THEN chat_room_participants.id END ) ) AS joined')) )
+                    ->addSelect((DB::raw("count( ( CASE WHEN \"chat_room_participants\".\"participantID\" = ".Auth::user()->id." THEN chat_room_participants.id END ) ) AS joined")) )
                     ->addSelect(DB::raw('count(chat_room_participants.id) as participants'))
                     ->leftJoin('users','users.id', '=',$this->tableName.'.participantID')
                     ->leftJoin('chat_room_participants', 'chat_room_participants.chatroomID', '=', $this->tableName.'.id')
