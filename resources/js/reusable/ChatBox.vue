@@ -25,7 +25,7 @@
                     <!-- DEFAULT MESSAGE -->
                     <template v-if="data.messages_row.length < 1">
                         <div class="msg left-msg">
-                            <div
+                            <div 
                             class="msg-img"
                             style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"
                             ></div>

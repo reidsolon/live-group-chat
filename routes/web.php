@@ -19,6 +19,10 @@ Route::get('/', function () {
     
 });
 
+Route::get('/test', function() {
+    echo date('H:i:s');
+});
+
 Route::get('/session/getCurrentParticipant', 'ParticipantController@getCurrentUser');
 
 Route::put('/part/isExist', 'ParticipantController@isExist');

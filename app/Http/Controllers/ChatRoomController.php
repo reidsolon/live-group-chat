@@ -94,8 +94,8 @@ class ChatRoomController extends Controller
                     'randomPass' => $request->randomPass,
                     'isPublic'  => $isPrivate,
                     'created_by'=> Auth::user()->id,
-                    'created_at' => date('Y-m-d H:m:i'),
-                    'updated_at' => date('Y-m-d H:m:i'),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
                 );
                 $id = DB::table($this->tableName)->insertGetId($insert);
                 if($id) {
@@ -111,8 +111,8 @@ class ChatRoomController extends Controller
                     $join = array(
                         'chatroomID' => $id,
                         'participantID' => Auth::user()->id,
-                        'created_at' => date('Y-m-d H:m:i'),
-                        'updated_at' => date('Y-m-d H:m:i'),
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
                     );
                     DB::table('chat_room_participants')->insert($join);
                 } else {
@@ -284,7 +284,7 @@ class ChatRoomController extends Controller
                 'participantID' => Auth::user()->id,
                 'chatroomID'    => $request->room_id,
                 'message'       => $request->message,
-                'created_at'    => date('Y-m-d H:m:i'),
+                'created_at'    => date('Y-m-d H:i:s'),
             );
             $id = DB::table('room_chat_logs')->insertGetId($insert);
             if($id) {
