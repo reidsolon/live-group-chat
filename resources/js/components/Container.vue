@@ -34,7 +34,12 @@
                 </template>
             </template>
             <template slot="modal-footer">
-                <button class="btn btn-primary" @click="createRoom" v-if="data.availability">Create Room</button>
+                <template v-if="!loading.creatingRoom">
+                    <button class="btn btn-primary" @click="createRoom" v-if="data.availability">Create Room</button>
+                </template>
+                <template v-else>    
+                    <button class="btn btn-primary" disabled >Creating room...</button>
+                </template>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </template>
         </Modal>
@@ -266,6 +271,7 @@ export default {
 
             // loading
             loading: {
+                creatingRoom: false,
                 availableLoad: false,
                 myRoomLoaded: false,
                 activeRoomLoaded: false,
@@ -321,6 +327,7 @@ export default {
             })
         },
         createRoom() {
+            this.loading.creatingRoom = true
             var val = validate('required')
             if(val) {
                 const payload = {
@@ -330,6 +337,7 @@ export default {
                 }
                 axios.post('/room/create', payload)
                 .then( res => {
+                    this.loading.creatingRoom = false
                     if(res.status == 200) {
                         if(res.data.status == 1) {
                             this.getUserRooms()
@@ -344,6 +352,7 @@ export default {
                 })
                 .catch( err => {
                     this.$toastr.e(err)
+                    this.loading.creatingRoom = false
                 })
             }
         },  

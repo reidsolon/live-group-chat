@@ -3,7 +3,7 @@
         <div class="card-header container-fluid">
             <div class="row">
                 <div class="col-9">
-                    {{route.room_name}} 
+                    <strong>{{route.room_name}}</strong>
                     <template v-if="!joined">
                         (You haven't join this room yet.)
                     </template>
@@ -15,12 +15,7 @@
             
         </div>
 
-        <div class="card-body msger" id="chatLogs">
-            <!-- <div class="d-flex justify-content-center" v-if="condition">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div> -->
+        <div class="card-body msger" v-if="joined" id="chatLogs">
                 <main class="msger-chat">
                     <!-- DEFAULT MESSAGE -->
                     <template v-if="data.messages_row.length < 1">
@@ -33,7 +28,66 @@
                             <div class="msg-bubble">
                                 <div class="msg-info">
                                 <div class="msg-info-name">CHAT ROOM BOT</div>
-                                <div class="msg-info-time">--:--</div>
+                                </div>
+
+                                <div class="msg-text">
+                                    Hi, welcome to Live Chat Room!
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="msg" :class="{'right-msg' : message.participantID == data.parentData.userData.id }" v-for="(message, index) in data.messages_row" :key="index">
+                            <div 
+                            v-if="message.participantID != data.parentData.userData.id"
+                            class="msg-img"
+                            style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)"
+                            ></div>
+
+                            <div class="msg-bubble">
+                                <div class="msg-info">
+                                <div class="msg-info-name">{{message.userName}}</div>
+                                </div>
+
+                                <div class="msg-text">
+                                    {{message.message}}
+                                </div>
+                                
+                                <div class="msg-info-time">{{message.created_at | moment("from", 'now')}}</div>
+                            </div>
+                        </div>
+                        <div class="msg" alt="Someone is typing.." v-if="data.someoneIsTyping.bool && data.someoneIsTyping.user.id != data.parentData.userData.id ">
+                            <div class="msg-bubble">
+                                <div class="msg-text">
+                                    <div class="ticontainer">
+                                        <div class="tiblock">
+                                            Someone is typing &nbsp;
+                                            <div class="tidot"></div>
+                                            <div class="tidot"></div>
+                                            <div class="tidot"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </template>
+                    
+                </main>
+        </div>
+        <div class="card-body msger" v-else>
+                <main class="msger-chat">
+                    <!-- DEFAULT MESSAGE -->
+                    <template v-if="data.messages_row.length < 1">
+                        <div class="msg left-msg">
+                            <div 
+                            class="msg-img"
+                            style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"
+                            ></div>
+
+                            <div class="msg-bubble">
+                                <div class="msg-info">
+                                <div class="msg-info-name">CHAT ROOM BOT</div>
                                 </div>
 
                                 <div class="msg-text">
@@ -211,7 +265,7 @@ export default {
             }
         },
         scrollTop() {
-            $(".msger-chat").stop().animate({ scrollTop: $(".msger-chat")[0].scrollHeight}, 1500);
+            $(".msger-chat").stop().animate({ scrollTop: $(".msger-chat")[0].scrollHeight}, 1000);
         },
         _getRoomMessages(id) {
             const payload = {
@@ -225,17 +279,17 @@ export default {
                         this.scrollTop()
                     } else if(res.data.status == -1) {
                         this.data.messages_row = []
-                        this.$toastr.w(res.data.message)
+                        // this.$toastr.w(res.data.message)
                     } else {
                         this.data.messages_row = []
-                        this.toastr.w(res.data.message)
+                        // this.toastr.w(res.data.message)
                     }
                 } else {
                     this.toastr.w(`Error with status code of ${res.status}`)
                 }
             })
             .catch( err => {
-                this.$toastr.e(err)
+                console.log(err)
             })
         },
         sendMessage() {
